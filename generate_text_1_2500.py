@@ -98,13 +98,17 @@ def process(mode, prompt, ref_img, ori_img, img_count, seed):
 
 mode = 'edit'
 # prompt = '精美的书法作品, 草书，上面写着"李"'
+# ori_img = cv2.imread("example_images/led-red.png")
+# ref_img = cv2.imread("example_images/lref-red.png")
+
+
 ori_img = cv2.imread("example_images/libaied.png")
 ref_img = cv2.imread("example_images/ref_libai.png")
+ori_img = cv2.cvtColor(ori_img, cv2.COLOR_RGB2BGR)
+ref_img = cv2.cvtColor(ref_img, cv2.COLOR_RGB2BGR)
+
 img_count = 6
 seed = 98053044
-
-
-
 
 
 # 创建一个空字典来存储数据
@@ -131,7 +135,8 @@ for key, value in data_dict.items():
 iter_data_dict = itertools.islice(data_dict.items(), 2500)
 for count, (key, value) in enumerate(iter_data_dict, 1):
     print(count, ": ", key, value)
-    prompt = '精美的书法作品, 草书，上面写着"%s"'%value
+    # prompt = '精美的书法作品, 草书，上面写着"%s"'%value
+    prompt = '精美的草书风格的书法作品,上面写着"%s"'%value
     process(mode,prompt,ref_img,ori_img,img_count,seed)
 
 # for i,j in enumerate(fant[1500:]):

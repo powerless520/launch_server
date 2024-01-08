@@ -40,6 +40,8 @@ def save_images(img_list, folder, p, data_dict):
         filename = f"{time_str}_{image_number}.jpg"
         save_path = os.path.join(folder_path, filename)
         cv2.imwrite(save_path, img[..., ::-1][250:370, 135:280])
+        # cv2.imwrite(save_path, img[..., ::-1][275:410, 125:280])
+        
 
 
 def check_channels(image):
