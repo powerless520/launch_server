@@ -6,13 +6,11 @@ import random
 class ChunlianGenerator:
     def __init__(self):
         self.image_width = 155
-        self.image_height = 1
+        self.image_height = 135
         self.image_folder = (
-            r'/Users/powerless/Library/Containers/com.tencent.xinWeChat/Data/Library/Application '
-            r'Support/com.tencent.xinWeChat/2.0b4.0.9/4fe324c0c23f221dadd8afa2135417d5/Message/MessageTemp'
-            r'/a0c98c9ed269e372120d883eee57f8fc/File/SaveImages'
+            r'C:\Users\acb\Desktop\SaveImages\SaveImages'
         )
-        self.save_path = (r'/Users/powerless/Downloads/spring_festival.png')
+        self.save_path = (r'C:\Users\acb\Desktop\spring_festival.png')
 
     def select_random_images(self, image_paths, num_images):
         folder_paths = [os.path.join(self.image_folder, folder_name) for folder_name in os.listdir(self.image_folder) if
@@ -46,9 +44,9 @@ class ChunlianGenerator:
         return text_image_paths
 
     def create_chunlian(self, text_images):
-        self.image_height = 200*len(text_images)
         # 创建空白春联图片
-        spring_festival_image = Image.new('RGB', (self.image_width, self.image_height), color=(163, 0, 0))
+        self.image_height = self.image_height*len(text_images)
+        spring_festival_image = Image.new('RGB', (self.image_width, self.image_height), color=(135, 13, 8))
         draw = ImageDraw.Draw(spring_festival_image)
 
         # 计算春联图片中每个文字的高度
