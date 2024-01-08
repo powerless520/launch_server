@@ -20,6 +20,12 @@ class ChunlianGenerator:
 
         return random.sample(image_paths, num_images)
 
+    def select_one_images(self, image_paths):
+        folder_paths = [os.path.join(self.image_folder, folder_name) for folder_name in os.listdir(self.image_folder) if
+                        os.path.isdir(os.path.join(self.image_folder, folder_name))]
+
+        return random.sample(image_paths, 1)
+
     def find_image_paths_for_text(self, text):
         text = text.lower()
         text_image_paths = []
@@ -32,7 +38,10 @@ class ChunlianGenerator:
                         char_image_paths = [os.path.join(char_folder_path, filename) for filename in
                                             os.listdir(char_folder_path) if
                                             filename.lower().endswith(('.png', '.jpg', '.jpeg'))]
-                        text_image_paths.extend(char_image_paths)
+
+                        random_one_path = generator.select_one_images(char_image_paths)
+
+                        text_image_paths.extend(random_one_path)
 
         return text_image_paths
 
@@ -79,10 +88,10 @@ if __name__ == "__main__":
     matchText = generator.find_image_paths_for_text(custom_text)
 
     # 从文件夹中随机选择8张图片
-    random_image_paths = generator.select_random_images(matchText, len(custom_text))
+    # random_image_paths = generator.select_random_images(matchText, len(custom_text))
 
     # 加载选中的图片
-    text_images = [Image.open(image_path) for image_path in random_image_paths]
+    text_images = [Image.open(image_path) for image_path in matchText]
 
     # 在终端显示用户输入的春联文字
     print("春联文字内容: ", custom_text)
