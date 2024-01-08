@@ -6,7 +6,7 @@ import random
 class ChunlianGenerator:
     def __init__(self):
         self.image_width = 155
-        self.image_height = 1080
+        self.image_height = 1
         self.image_folder = (
             r'/Users/powerless/Library/Containers/com.tencent.xinWeChat/Data/Library/Application '
             r'Support/com.tencent.xinWeChat/2.0b4.0.9/4fe324c0c23f221dadd8afa2135417d5/Message/MessageTemp'
@@ -46,6 +46,7 @@ class ChunlianGenerator:
         return text_image_paths
 
     def create_chunlian(self, text_images):
+        self.image_height = 200*len(text_images)
         # 创建空白春联图片
         spring_festival_image = Image.new('RGB', (self.image_width, self.image_height), color=(163, 0, 0))
         draw = ImageDraw.Draw(spring_festival_image)
