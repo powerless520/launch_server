@@ -17,7 +17,6 @@ class ChunlianGenerator:
             r'C:\Users\acb\Desktop\SaveImages\SaveImages'
         )
        
-
     def select_random_images(self, image_paths, num_images):
         folder_paths = [os.path.join(self.image_folder, folder_name) for folder_name in os.listdir(self.image_folder) if
                         os.path.isdir(os.path.join(self.image_folder, folder_name))]
