@@ -25,8 +25,9 @@ def load_oss_config(config_path='config.yaml'):
 def upload_to_oss(local_file_path):
     current_time = datetime.datetime.now()
 
+    # todo update:文件信息
     # 上传文件
-    result = init_bucket().put_object_from_file("/test/" + local_file_path, os.path.basename(local_file_path))
+    result = init_bucket().put_object_from_file(local_file_path, os.path.basename(local_file_path))
 
     # 打印上传结果
     print(f"上传文件成功，文件URL：{result.resp.response.url}")
