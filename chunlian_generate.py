@@ -8,9 +8,14 @@ class ChunlianGenerator:
         self.image_width = 155
         self.image_height = 135
         self.image_folder = (
-            r'C:\Users\acb\Desktop\SaveImages\SaveImages'
+            r'/Users/powerless/Library/Containers/com.tencent.xinWeChat/Data/Library/Application '
+            r'Support/com.tencent.xinWeChat/2.0b4.0.9/4fe324c0c23f221dadd8afa2135417d5/Message/MessageTemp'
+            r'/a0c98c9ed269e372120d883eee57f8fc/File/SaveImages'
         )
-        self.save_path = (r'C:\Users\acb\Desktop\spring_festival.png')
+        self.save_path = (r'/Users/powerless/Downloads/spring_festival.png')
+
+    def return_save_path(self):
+        return self.save_path
 
     def select_random_images(self, image_paths, num_images):
         folder_paths = [os.path.join(self.image_folder, folder_name) for folder_name in os.listdir(self.image_folder) if
@@ -25,7 +30,7 @@ class ChunlianGenerator:
         return random.sample(image_paths, 1)
 
     def find_image_paths_for_text(self, text):
-        text = text.lower()
+        print("进入方法:" + text)
         text_image_paths = []
 
         for charText in text:
@@ -37,7 +42,7 @@ class ChunlianGenerator:
                                             os.listdir(char_folder_path) if
                                             filename.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
-                        random_one_path = generator.select_one_images(char_image_paths)
+                        random_one_path = self.select_one_images(char_image_paths)
 
                         text_image_paths.extend(random_one_path)
 
@@ -45,7 +50,7 @@ class ChunlianGenerator:
 
     def create_chunlian(self, text_images):
         # 创建空白春联图片
-        self.image_height = self.image_height*len(text_images)
+        self.image_height = self.image_height * len(text_images)
         spring_festival_image = Image.new('RGB', (self.image_width, self.image_height), color=(135, 13, 8))
         draw = ImageDraw.Draw(spring_festival_image)
 
@@ -78,24 +83,20 @@ class ChunlianGenerator:
         spring_festival_image.save(self.save_path)
 
 
-if __name__ == "__main__":
+def BuildChunlian(text: str):
     generator = ChunlianGenerator()
+    matchText = generator.find_image_paths_for_text(text)
+    text_images = [Image.open(image_path) for image_path in matchText]
+    # 创建春联图片
+    generator.create_chunlian(text_images)
+    return "success"
 
+
+if __name__ == "__main__":
     # 获取用户输入的春联文字
     custom_text = input("请输入春联的文字内容: ")
 
-    matchText = generator.find_image_paths_for_text(custom_text)
-
-    # 从文件夹中随机选择8张图片
-    # random_image_paths = generator.select_random_images(matchText, len(custom_text))
-
-    # 加载选中的图片
-    text_images = [Image.open(image_path) for image_path in matchText]
+    BuildChunlian(custom_text)
 
     # 在终端显示用户输入的春联文字
-    print("春联文字内容: ", custom_text)
-
-    # 创建春联图片
-    generator.create_chunlian(text_images)
-
     print("春联图片已生成并保存。")
