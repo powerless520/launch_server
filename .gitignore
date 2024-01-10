@@ -4,7 +4,7 @@ training/
 lightning_logs/
 image_log/
 result*
-shufa
+shufa*
 *.pth
 *.pt
 *.ckpt
