@@ -76,7 +76,7 @@ class ChunlianGenerator:
             save_path = os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'_'+save_name+'_'+self.xialian+'.png')
         image_height = self.image_height * len(text_images)
         image_width = self.image_width
-        spring_festival_image = Image.new('RGB', (image_width+40, image_height+40), color=(135, 13, 8))
+        spring_festival_image = Image.new('RGB', (image_width+60, image_height+60), color=(135, 13, 8))
         draw = ImageDraw.Draw(spring_festival_image)
 
         # 计算春联图片中每个文字的高度
@@ -85,7 +85,7 @@ class ChunlianGenerator:
         # 在春联图片上贴上文字图片
         for i, text_image in enumerate(text_images):
             # 计算贴上文字图片的位置
-            position = (20+(image_width - text_image.width) // 2, 20+i * text_height)
+            position = (30+(image_width - text_image.width) // 2, 30+i * text_height)
 
             # 将0像素转为透明
             text_image = text_image.convert("RGBA")
@@ -114,7 +114,7 @@ class ChunlianGenerator:
         save_path = os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'_'+save_name+'_'+self.hengpi+'.png')
         image_width = self.image_width * len(text_images)
         image_height = self.image_height
-        spring_festival_image = Image.new('RGB', (40+image_width, 40+image_height), color=(135, 13, 8))
+        spring_festival_image = Image.new('RGB', (60+image_width, 60+image_height), color=(135, 13, 8))
         draw = ImageDraw.Draw(spring_festival_image)
 
         # 计算春联图片中每个文字的高度
@@ -123,7 +123,7 @@ class ChunlianGenerator:
         # 在春联图片上贴上文字图片
         for i, text_image in enumerate(text_images):
             # 计算贴上文字图片的位置
-            position = (20+i * text_width, 20+(image_height - text_image.height) // 2)
+            position = (30+i * text_width, 30+((image_height - text_image.height) // 2))
 
             # 将0像素转为透明
             text_image = text_image.convert("RGBA")
