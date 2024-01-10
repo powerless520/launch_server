@@ -6,16 +6,36 @@ from dashscope import Generation
 from http import HTTPStatus
 import json
 from dashscope import TextEmbedding
-dashscope.api_key = "输入key"
+import yaml
+import datetime
+
+RESULT_PATH='./result' 
+DATA_PATH = './shufa'
+
+def create_path(folder_path):
+    if not os.path.exists(folder_path):
+        # 如果文件夹不存在，创建文件夹
+        os.makedirs(folder_path)
+    else:
+        # 如果文件夹存在，跳过
+        pass
+
+def load_oss_config(config_path='config.yaml'):
+    with open(config_path, 'r') as file:
+        yaml_config = yaml.safe_load(file)
+    return yaml_config.get('oss_config')
 
 class ChunlianGenerator:
     def __init__(self):
         self.image_width = 155
         self.image_height = 135
-        self.image_folder = (
-
-            r'C:\Users\acb\Desktop\SaveImages\SaveImages'
-        )
+        self.image_folder = DATA_PATH
+        now = datetime.datetime.now()
+        self.formatted_time = now.strftime("%Y-%m-%d-%H-%M-%S")
+        self.shanglian=None
+        self.xialian=None
+        self.hengpi=None
+        self.custom_text=None
        
     def select_random_images(self, image_paths, num_images):
         folder_paths = [os.path.join(self.image_folder, folder_name) for folder_name in os.listdir(self.image_folder) if
@@ -49,8 +69,11 @@ class ChunlianGenerator:
         return text_image_paths
 
     def create_duilian(self, text_images,save_name):
-
-        save_path = 'C:/Users/acb/Desktop/'+ save_name +'.png'
+        
+        if save_name=='上联':
+            save_path = os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'_'+save_name+'_'+self.shanglian+'.png')
+        else:
+            save_path = os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'_'+save_name+'_'+self.xialian+'.png')
         image_height = self.image_height * len(text_images)
         image_width = self.image_width
         spring_festival_image = Image.new('RGB', (image_width, image_height), color=(135, 13, 8))
@@ -87,8 +110,8 @@ class ChunlianGenerator:
 
 
     def create_hengpi(self, text_images,save_name):
-
-        save_path = 'C:/Users/acb/Desktop/'+ save_name +'.png'
+        
+        save_path = os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'_'+save_name+'_'+self.hengpi+'.png')
         image_width = self.image_width * len(text_images)
         image_height = self.image_height
         spring_festival_image = Image.new('RGB', (image_width, image_height), color=(135, 13, 8))
@@ -125,23 +148,23 @@ class ChunlianGenerator:
 
     def save2class(self,name,image):
         if name == '上联':
-            self.shanglian=image
+            self.shanglian_image=image
         if name == '下联':
-            self.xailian=image
+            self.xailian_image=image
         if name == '横批':
-            self.hengpi=image
+            self.hengpi_image=image
     
     def merg_chunlian(self):
         
 
         # 读取上联图像
-        image1 =  self.shanglian
+        image1 =  self.shanglian_image
 
         # 读取下联图像
-        image2 =self.xailian
+        image2 = self.xailian_image
 
         # 读取横批图像
-        horizontal_image = self.hengpi
+        horizontal_image = self.hengpi_image
 
         # 创建一个iPhone屏幕大小的画布
         canvas = Image.new("RGB", (1400, 1300), "white")
@@ -170,10 +193,11 @@ class ChunlianGenerator:
         canvas.paste(horizontal_image, (x5, y5, x6, y6))
 
         # 保存结果图像
-        canvas.save(r"C:\Users\acb\Desktop\result.png")
+        # print()
+        canvas.save(os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'-春联'+'-'+self.hengpi+'.png'))
 
 class LLM():
-    def __init__(self,model='qwen-turbo'):
+    def __init__(self,model='qwen-max'):
         '''
         qwen-turbo
         qwen-plus
@@ -223,9 +247,11 @@ class LLM():
 (1) 信息收集：给用户书写春节对联前，务必首先了解他们的具体需求，如春节对联的使用场合、场地、主题、风格等。如果用的的需求为包含足够的信息，请务必充分发挥你作为沟通大师和需求收集大师的能力，根据你掌握的春节对联风水学知识、春节对联的贴联知识和贴联技巧判断需要用户提供哪些信息，并引导用户提供足够你书写高雅、内涵丰富的、富有中国文化底蕴的春节对联的信息。
 (2) 写龙年春节对联：收集完信息后，充分理解用户需求和春节对
 联使用场地、场合，充分借鉴和应用四书五经、唐诗宋词以及各种对联名作的书写技巧、典故运用和表现手法，充分调动你掌握的中国传统文化、春节文化知识，充分发挥你的文学造诣书写对仗工整、富有意境、具备深厚中国文化底蕴、符合春节对联使用场景、符合春节对联格式要求的龙年春节对联。
-(3) 贴对联指导：书写完对联后，为用户提供贴心的贴对联的指导。
+(3) 贴对联指导：如果用户输入名字，把用户的名字藏在对联之中，注意不要连续出现，每个字只出现一次，
 
-用户输入的主题是：表达爱意，输入的名字是"xxx"，用户输入的姓名必须分开，对联中必须包含姓名，注意不要很直白的表达用户的意思，对联格式要求：上联七个字，下联七个字，横批四个字。除非用户单独提要求，否则请务必按照此格式书写对联。
+用户输入的主题是：“表达爱意”，输入的名字是"xxx"
+注意上下联的字数限制，上联七个字，下联七个字，横批四个字
+
 ''' 
         target_location = prompt.find("xxx")
         target_length = len("xxx")
@@ -247,10 +273,14 @@ class LLM():
 
 
 if __name__ == "__main__":
+    config = load_oss_config()
+    dashscope.api_key = config['dashscope.api_key']
+    create_path(RESULT_PATH)
     generator = ChunlianGenerator()
     llm = LLM()
     # 获取用户输入的春联文字
     custom_text = input("请输入春联的文字内容: ")
+    generator.custom_text = custom_text
     for i in range(5):
         try:
             curr_gpt_response = llm.request(custom_text)
@@ -258,6 +288,14 @@ if __name__ == "__main__":
             print("上联",shanglian)
             print("下联",xialian)
             print("横批",hengpi)
+
+            if len(shanglian)!=len(xialian) or (custom_text in shanglian+xialian+hengpi) or len(hengpi)!=4:
+                continue
+            else:
+                generator.shanglian=shanglian
+                generator.xialian=xialian
+                generator.hengpi=hengpi
+          
             break
         except Exception as e:
             print("An error occurred:", e)

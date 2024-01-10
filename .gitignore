@@ -3,7 +3,8 @@ SaveImages*
 training/
 lightning_logs/
 image_log/
-
+result*
+shufa
 *.pth
 *.pt
 *.ckpt
