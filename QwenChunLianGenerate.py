@@ -197,7 +197,7 @@ class ChunlianGenerator:
         canvas.save(os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'-春联'+'-'+self.hengpi+'.png'))
 
 class LLM():
-    def __init__(self,model='qwen-max'):
+    def __init__(self,model='qwen-max-1201'):
         '''
         qwen-turbo
         qwen-plus
@@ -230,11 +230,7 @@ class LLM():
 
 能力：
 你精通中国传统节日文化提别是各地的春节文化习俗、龙年相关的传统和习俗。
-你精通中国的四书五经、唐诗宋词以及各种对联名作的书写技巧、典故运用和表现手法。
-你对中国传统对联的历史、春节对联历史、春节文化和艺术有深入的研究和理解。
-你精通中国风水学及中国风水学在春节对联和贴联中的应用。
 你精通春节对联的各种技巧，如平仄、对仗、意境的把控，具备出色的文学造诣，能根据不同的需求、春节对联使用场景创作高雅、内涵丰富的、富有中国文化底蕴的龙年春节对联。
-你对春节对联在不同场合的使用有丰富的知识和经验，熟悉传统和现代的对联贴法，能够指导人们正确地张贴春节对联。
 
 对联格式要求：上联七个字，下联七个字，横批四个字。除非用户单独提要求，否则请务必按照此格式书写对联。输出时请按下面这种格式输出
 {
@@ -243,14 +239,8 @@ class LLM():
     "横批":"你写的横批"
 }
 
-处理流程：
-(1) 信息收集：给用户书写春节对联前，务必首先了解他们的具体需求，如春节对联的使用场合、场地、主题、风格等。如果用的的需求为包含足够的信息，请务必充分发挥你作为沟通大师和需求收集大师的能力，根据你掌握的春节对联风水学知识、春节对联的贴联知识和贴联技巧判断需要用户提供哪些信息，并引导用户提供足够你书写高雅、内涵丰富的、富有中国文化底蕴的春节对联的信息。
-(2) 写龙年春节对联：收集完信息后，充分理解用户需求和春节对
-联使用场地、场合，充分借鉴和应用四书五经、唐诗宋词以及各种对联名作的书写技巧、典故运用和表现手法，充分调动你掌握的中国传统文化、春节文化知识，充分发挥你的文学造诣书写对仗工整、富有意境、具备深厚中国文化底蕴、符合春节对联使用场景、符合春节对联格式要求的龙年春节对联。
-(3) 贴对联指导：如果用户输入名字，把用户的名字藏在对联之中，注意不要连续出现，每个字只出现一次，
-
-用户输入的主题是：“表达爱意”，输入的名字是"xxx"
-注意上下联的字数限制，上联七个字，下联七个字，横批四个字
+用户输入的主题是：“表达爱情”，输入的名字是"xxx"
+注意上下联的字数限制，上联七个字，下联七个字，横批四个字，把用户的名字藏在对联之中，注意不要连续出现，每个字只出现一次，并且要分开，不能出现在横批上，同时保证平仄、对仗，文采
 
 ''' 
         target_location = prompt.find("xxx")
@@ -281,15 +271,20 @@ if __name__ == "__main__":
     # 获取用户输入的春联文字
     custom_text = input("请输入春联的文字内容: ")
     generator.custom_text = custom_text
-    for i in range(5):
+    for i in range(10):
         try:
             curr_gpt_response = llm.request(custom_text)
             shanglian,xialian,hengpi = llm.parse(curr_gpt_response)
-            print("上联",shanglian)
-            print("下联",xialian)
-            print("横批",hengpi)
+            # print("上联",shanglian)
+            # print("下联",xialian)
+            # print("横批",hengpi)
 
-            if len(shanglian)!=len(xialian) or (custom_text in shanglian+xialian+hengpi) or len(hengpi)!=4:
+            print('len(shanglian)!=len(xialian) ',len(shanglian)!=len(xialian))
+            print('custom_text in shanglian+xialian+hengpi',custom_text in shanglian+xialian+hengpi)
+            print('len(hengpi)!=4',len(hengpi)!=4)
+            print("len(shanglian)>9",len(shanglian)>9)
+
+            if len(shanglian)!=len(xialian) or (custom_text in shanglian+xialian+hengpi) or len(hengpi)!=4 or len(shanglian)>9:
                 continue
             else:
                 generator.shanglian=shanglian
