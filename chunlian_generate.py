@@ -2,6 +2,8 @@ import os
 from PIL import Image, ImageDraw
 import random
 
+from file_cloud_def import OssClient
+
 
 class ChunlianGenerator:
     def __init__(self):
@@ -82,14 +84,20 @@ class ChunlianGenerator:
         # 春联图片保存到文件
         spring_festival_image.save(self.save_path)
 
+        return self.save_path
+
 
 def BuildChunlian(text: str):
     generator = ChunlianGenerator()
     matchText = generator.find_image_paths_for_text(text)
     text_images = [Image.open(image_path) for image_path in matchText]
     # 创建春联图片
-    generator.create_chunlian(text_images)
-    return "success"
+    savePath = generator.create_chunlian(text_images)
+    # 上传到oss
+    ossClient = OssClient()
+    oss_url = ossClient.upload_to_oss(savePath)
+
+    return oss_url
 
 
 if __name__ == "__main__":
