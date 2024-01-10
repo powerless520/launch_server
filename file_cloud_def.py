@@ -27,7 +27,7 @@ def upload_to_oss(local_file_path):
 
     # todo update:文件信息
     # 上传文件
-    result = init_bucket().put_object_from_file(local_file_path, os.path.basename(local_file_path))
+    result = init_bucket().put_object_from_file(os.path.join('generate',local_file_path), os.path.basename(local_file_path))
 
     # 打印上传结果
     print(f"上传文件成功，文件URL：{result.resp.response.url}")
@@ -35,11 +35,12 @@ def upload_to_oss(local_file_path):
 
 def download_to_oss(cloud_path, root):
     # 上传文件
-    result = init_bucket().get_object_to_file(os.path.join(root, os.path.basename(cloud_path)), cloud_path)
+    result = init_bucket().get_object_to_file(cloud_path,os.path.join(root, os.path.basename(cloud_path)))
 
     # 打印上传结果
     print(f"下载文件成功，文件URL：{result.resp.response.url}")
 
 
 if __name__ == '__main__':
-    upload_to_oss('spring_festival.png')
+    upload_to_oss('pos_imgs.png')#生成图片默认放这里
+    download_to_oss('generate/pos_imgs.png', '.')
