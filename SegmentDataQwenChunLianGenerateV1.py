@@ -64,7 +64,7 @@ class ChunlianGenerator:
                                             os.listdir(char_folder_path) if
                                             filename.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
-                        random_one_path = generator.select_one_images(char_image_paths)
+                        random_one_path = self.select_one_images(char_image_paths)
 
                         text_image_paths.extend(random_one_path)
         
@@ -223,7 +223,10 @@ class ChunlianGenerator:
 
         # 保存结果图像
         # print()
-        canvas.save(os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'-春联'+'-'+self.hengpi+'.png'))
+        save_path = os.path.join(RESULT_PATH,self.formatted_time+'-'+self.custom_text+'-春联'+'-'+self.hengpi+'.png')
+        canvas.save(save_path)
+        return save_path
+        
 
 class LLM():
     def __init__(self,model='qwen-max-1201'):
@@ -269,7 +272,7 @@ class LLM():
 }
 
 用户输入的主题是：“祝福”，输入的名字是"xxx"
-注意上下联的字数限制，上联七个字，下联七个字，横批四个字，把用户的名字藏在对联之中，注意不要连续出现，每个字只出现一次，并且要分开，不能出现在横批上，同时保证平仄、对仗，文采
+必须要做到上下联的字数限制，上联七个字，下联七个字，横批四个字，把用户的名字藏在对联之中，注意不要连续出现，每个字只出现一次，并且要分开，不能出现在横批上,不要标点符号，同时保证平仄、对仗，文采
 
 ''' 
         target_location = prompt.find("xxx")
@@ -289,6 +292,61 @@ class LLM():
         return shanglian,xialian,hengpi
         
 
+
+def pipeline(custom_text):
+    # try:
+        config = load_oss_config()
+        dashscope.api_key = config['dashscope.api_key']
+        create_path(RESULT_PATH)
+        generator = ChunlianGenerator()
+        llm = LLM()
+        # 获取用户输入的春联文字
+        generator.custom_text = custom_text
+        for i in range(10):
+            try:
+                curr_gpt_response = llm.request(custom_text)
+                shanglian,xialian,hengpi = llm.parse(curr_gpt_response)
+                # print("上联",shanglian)
+                # print("下联",xialian)
+                # print("横批",hengpi)
+
+                print('len(shanglian)!=len(xialian) ',len(shanglian)!=len(xialian))
+                print('custom_text in shanglian+xialian+hengpi',custom_text in shanglian+xialian+hengpi)
+                print('len(hengpi)!=4',len(hengpi)!=4)
+                print("len(shanglian)>9",len(shanglian)>9)
+
+                if len(shanglian)!=len(xialian) or (custom_text in shanglian+xialian+hengpi) or len(hengpi)!=4 or len(shanglian)>9:
+                    continue
+                else:
+                    generator.shanglian=shanglian
+                    generator.xialian=xialian
+                    generator.hengpi=hengpi
+            
+                break
+            except Exception as e:
+                print("An error occurred:", e)
+                continue
+
+        shanglian = generator.find_image_paths_for_text(shanglian)
+        xialian = generator.find_image_paths_for_text(xialian)
+        hengpi = generator.find_image_paths_for_text(hengpi)
+        # 加载选中的图片
+        shanglian_image = [Image.open(image_path) for image_path in shanglian]
+        xialian_image = [Image.open(image_path) for image_path in xialian]
+        hengpi_image = [Image.open(image_path) for image_path in hengpi]
+
+        # 创建上联图片
+        generator.create_duilian(shanglian_image,"上联")
+        generator.create_duilian(xialian_image,"下联")
+        generator.create_hengpi(hengpi_image,"横批")
+        
+
+        print("春联图片已生成并保存。")
+        return True, generator.merg_chunlian()
+    
+    # except Exception as e:
+    #     print("An error occurred:", e)
+    #     return False,None
 
 
 if __name__ == "__main__":
@@ -324,10 +382,6 @@ if __name__ == "__main__":
         except Exception as e:
             print("An error occurred:", e)
             continue
-    
-    text_images = []
-    # print(shanglian)
-
 
     shanglian = generator.find_image_paths_for_text(shanglian)
     xialian = generator.find_image_paths_for_text(xialian)
@@ -341,7 +395,7 @@ if __name__ == "__main__":
     generator.create_duilian(shanglian_image,"上联")
     generator.create_duilian(xialian_image,"下联")
     generator.create_hengpi(hengpi_image,"横批")
-    generator.merg_chunlian()
+    save_path = generator.merg_chunlian()
 
     print("春联图片已生成并保存。")
 

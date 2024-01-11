@@ -262,6 +262,63 @@ class LLM():
 
 
 
+
+def pipeline(custom_text):
+    try:
+        config = load_oss_config()
+        dashscope.api_key = config['dashscope.api_key']
+        create_path(RESULT_PATH)
+        generator = ChunlianGenerator()
+        llm = LLM()
+        generator.custom_text = custom_text
+        for i in range(10):
+            try:
+                curr_gpt_response = llm.request(custom_text)
+                shanglian,xialian,hengpi = llm.parse(curr_gpt_response)
+                # print("上联",shanglian)
+                # print("下联",xialian)
+                # print("横批",hengpi)
+
+                print('len(shanglian)!=len(xialian) ',len(shanglian)!=len(xialian))
+                print('custom_text in shanglian+xialian+hengpi',custom_text in shanglian+xialian+hengpi)
+                print('len(hengpi)!=4',len(hengpi)!=4)
+                print("len(shanglian)>9",len(shanglian)>9)
+
+                if len(shanglian)!=len(xialian) or (custom_text in shanglian+xialian+hengpi) or len(hengpi)!=4 or len(shanglian)>9:
+                    continue
+                else:
+                    generator.shanglian=shanglian
+                    generator.xialian=xialian
+                    generator.hengpi=hengpi
+            
+                break
+            except Exception as e:
+                print("An error occurred:", e)
+                continue
+        
+        shanglian = generator.find_image_paths_for_text(shanglian)
+        xialian = generator.find_image_paths_for_text(xialian)
+        hengpi = generator.find_image_paths_for_text(hengpi)
+
+        # 加载选中的图片
+        shanglian_image = [Image.open(image_path) for image_path in shanglian]
+        xialian_image = [Image.open(image_path) for image_path in xialian]
+        hengpi_image = [Image.open(image_path) for image_path in hengpi]
+
+
+        # 创建上联图片
+        generator.create_duilian(shanglian_image,"上联")
+        generator.create_duilian(xialian_image,"下联")
+        generator.create_hengpi(hengpi_image,"横批")
+        generator.merg_chunlian()
+        return True
+    
+    except Exception as e:
+        print("An error occurred:", e)
+        return False
+                
+
+
 if __name__ == "__main__":
     config = load_oss_config()
     dashscope.api_key = config['dashscope.api_key']
@@ -296,8 +353,6 @@ if __name__ == "__main__":
             print("An error occurred:", e)
             continue
     
-    text_images = []
-
     shanglian = generator.find_image_paths_for_text(shanglian)
     xialian = generator.find_image_paths_for_text(xialian)
     hengpi = generator.find_image_paths_for_text(hengpi)
