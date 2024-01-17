@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from SegmentDataQwenChunLianGenerateV1 import pipeline
+from SegmentDataQwenChunLianGenerateV3 import pipeline
 from file_cloud_def import OssClient
 app = FastAPI()
 oss = OssClient()
