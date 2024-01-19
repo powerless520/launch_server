@@ -251,6 +251,7 @@ class ChunlianGenerator:
         # canvas = Image.new("RGBA", (1284+300, height), (0, 0, 0, 0))
         canvas = Image.open('background.png')
         
+        
          # 计算上联图像的位置
         x1 = 400
         y1 = 0
@@ -263,10 +264,11 @@ class ChunlianGenerator:
         draw = ImageDraw.Draw(canvas)
         # 写入文字
         text = '太白书之'
-        position = (90, 220)  # 文字的左上角坐标
+        position = (90, 220)  # 水平文字的左上角坐标
         text_color = (47, 31, 9)  # 文字颜色，RGB格式
+        position1 = (90, 400)  # 垂直文字的左上角坐标
         draw.text(position, text, fill=text_color, font=font1)
-        draw = self.heng2shu(draw,(90,400),font2,text_color)
+        draw = self.heng2shu(draw,position1,font2,text_color)
         canvas.save(save_path)
         return save_path
     
