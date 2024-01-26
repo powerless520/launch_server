@@ -23,7 +23,11 @@ def create_path(folder_path):
 def load_oss_config(config_path='config.yaml'):
     with open(config_path, 'r') as file:
         yaml_config = yaml.safe_load(file)
+<<<<<<< HEAD
     return yaml_config
+=======
+    return yaml_config.get('oss_config')
+>>>>>>> 861ece6604fb807480dc74ec306352928848d32e
 
 class ChunlianGenerator:
     def __init__(self):
@@ -357,13 +361,21 @@ class LLM():
 def pipeline(custom_text):
     try:
         config = load_oss_config()
+<<<<<<< HEAD
         dashscope.api_key = config['dashscope']['api_key']
+=======
+        dashscope.api_key = config['dashscope.api_key']
+>>>>>>> 861ece6604fb807480dc74ec306352928848d32e
         create_path(RESULT_PATH)
         generator = ChunlianGenerator()
         llm = LLM()
         # 获取用户输入的春联文字
         generator.custom_text = custom_text
+<<<<<<< HEAD
         for i in range(10):
+=======
+        for i in range(2):
+>>>>>>> 861ece6604fb807480dc74ec306352928848d32e
             try:
                 curr_gpt_response = llm.request(custom_text)
                 shanglian,xialian,hengpi = llm.parse(curr_gpt_response)
@@ -406,7 +418,11 @@ def pipeline(custom_text):
         return True, generator.merg_chunlian()
     except:
         config = load_oss_config()
+<<<<<<< HEAD
         dashscope.api_key = config['dashscope']['api_key']
+=======
+        dashscope.api_key = config['dashscope.api_key']
+>>>>>>> 861ece6604fb807480dc74ec306352928848d32e
         create_path(RESULT_PATH)
         generator = ChunlianGenerator()
         generator.custom_text = custom_text
@@ -434,7 +450,11 @@ def pipeline(custom_text):
 
 if __name__ == "__main__":
     config = load_oss_config()
+<<<<<<< HEAD
     dashscope.api_key = config['dashscope']['api_key']
+=======
+    dashscope.api_key = config['dashscope.api_key']
+>>>>>>> 861ece6604fb807480dc74ec306352928848d32e
     create_path(RESULT_PATH)
     generator = ChunlianGenerator()
     llm = LLM()
