@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from SegmentDataQwenChunLianGenerateV3 import pipeline
+from SegmentDataQwenChunLianGenerateV5 import pipeline
 from file_cloud_def import OssClient
 app = FastAPI()
 oss = OssClient()
@@ -57,4 +57,4 @@ async def create_item(item: Item) -> OutPutData:
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8188)
+    uvicorn.run(app, host="0.0.0.0", port=8177)

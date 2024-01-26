@@ -23,7 +23,7 @@ def create_path(folder_path):
 def load_oss_config(config_path='config.yaml'):
     with open(config_path, 'r') as file:
         yaml_config = yaml.safe_load(file)
-    return yaml_config.get('oss_config')
+    return yaml_config
 
 class ChunlianGenerator:
     def __init__(self):
@@ -357,13 +357,13 @@ class LLM():
 def pipeline(custom_text):
     try:
         config = load_oss_config()
-        dashscope.api_key = config['dashscope.api_key']
+        dashscope.api_key = config['dashscope']['api_key']
         create_path(RESULT_PATH)
         generator = ChunlianGenerator()
         llm = LLM()
         # 获取用户输入的春联文字
         generator.custom_text = custom_text
-        for i in range(2):
+        for i in range(10):
             try:
                 curr_gpt_response = llm.request(custom_text)
                 shanglian,xialian,hengpi = llm.parse(curr_gpt_response)
@@ -406,16 +406,16 @@ def pipeline(custom_text):
         return True, generator.merg_chunlian()
     except:
         config = load_oss_config()
-        dashscope.api_key = config['dashscope.api_key']
+        dashscope.api_key = config['dashscope']['api_key']
         create_path(RESULT_PATH)
         generator = ChunlianGenerator()
         generator.custom_text = custom_text
-        generator.shanglian='腾龙舞瑞雪九州'
-        generator.xialian='展翅飞春风四海'
-        generator.hengpi='龙瑞春风'
-        shanglian = generator.find_image_paths_for_text(shanglian)
-        xialian = generator.find_image_paths_for_text(xialian)
-        hengpi = generator.find_image_paths_for_text(hengpi)
+        generator.shanglian="腾龙舞瑞雪九州"
+        generator.xialian="展翅飞春风四海"
+        generator.hengpi="龙瑞春风"
+        shanglian = generator.find_image_paths_for_text(generator.shanglian)
+        xialian = generator.find_image_paths_for_text(generator.xialian)
+        hengpi = generator.find_image_paths_for_text(generator.hengpi)
         # 加载选中的图片
         shanglian_image = [Image.open(image_path) for image_path in shanglian]
         xialian_image = [Image.open(image_path) for image_path in xialian]
@@ -434,7 +434,7 @@ def pipeline(custom_text):
 
 if __name__ == "__main__":
     config = load_oss_config()
-    dashscope.api_key = config['dashscope.api_key']
+    dashscope.api_key = config['dashscope']['api_key']
     create_path(RESULT_PATH)
     generator = ChunlianGenerator()
     llm = LLM()
@@ -481,6 +481,7 @@ if __name__ == "__main__":
     save_path = generator.merg_chunlian()
     save_path = generator.merg_result()
     print("春联图片已生成并保存。")
+    # pipeline("金跃龙")
 
 
 
