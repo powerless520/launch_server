@@ -2,12 +2,17 @@ from typing import Any
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from SegmentDataQwenChunLianGenerateV3 import pipeline
+from SegmentDataQwenChunLianGenerateV5 import pipeline
 from file_cloud_def import OssClient
 app = FastAPI()
+# 静态资源访问
+app.mount("/static", StaticFiles(directory="./imgs"), name="static")
+
 oss = OssClient()
+
 
 class Item(BaseModel):
     name: str
@@ -37,7 +42,7 @@ def chunlian(inputData: InputData) -> Any:
             msg="success",
             data=result
         )
-        oss.upload_to_oss(result)
+        # oss.upload_to_oss(result)
     else:
         out = OutPutData(
             msg="failure"
