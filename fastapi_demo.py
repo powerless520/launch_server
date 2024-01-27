@@ -5,11 +5,11 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from SegmentDataQwenChunLianGenerateV5 import pipeline
+from SegmentDataQwenChunLianGenerateV6 import pipeline
 from file_cloud_def import OssClient
 app = FastAPI()
 # 静态资源访问
-app.mount("/static", StaticFiles(directory="./imgs"), name="static")
+app.mount("/result", StaticFiles(directory="./result"), name="result")
 
 oss = OssClient()
 
@@ -37,12 +37,14 @@ def chunlian(inputData: InputData) -> Any:
     flag, result = pipeline(custom_text)
 
     if flag:
+        returnUrl = oss.upload_to_oss(result)
+        # returnUrlPrefix = 'http://127.0.0.1:8177/result/'
+
         out = OutPutData(
             code=200,
             msg="success",
-            data=result
+            data=returnUrl
         )
-        # oss.upload_to_oss(result)
     else:
         out = OutPutData(
             msg="failure"
